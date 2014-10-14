@@ -1,0 +1,26 @@
+{
+  "name": "tehillah",
+  "version": "0.0.1",
+  "description": "Web-based application to manage and display worship songs.",
+  "main": "index.js",
+  "bin": {
+    "tehillah": "bin/tehillah"
+  },
+  "scripts": {
+    "preinstall": "bash preinstall.sh",
+    "start": "node bin/tehillah",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DivDE <divde@free.fr>",
+  "license": "AGPLv2",
+  "dependencies": {
+    "express": "^4.9.7",
+    "hashspace": "",
+    "minimist": "^1.1.0",
+    "noder-js": "^1.6.0",
+    "socket.io": "^1.1.0"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
