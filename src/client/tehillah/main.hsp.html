@@ -1,8 +1,33 @@
+<script>
+var songEditor = require("./song/song-editor.hsp.html");
+var dropZone = require("../generic/components/drop-zone.hsp.html");
+var readFileAsText = require("../generic/functions/readFileAsText");
+var songImport = require("./song/opensong-import");
+
+var data = {
+song : {}
+};
+
+var drop = function(event) {
+var file = event.dataTransfer.files[0];
+readFileAsText(file).then(function (textFile) {
+var song = songImport(textFile);
+data.song = song;
+}).done();
+};
+
+</script>
+
 <template id="main">
   <div class="container-fluid">
     <div class="page-header">
       <h1>Tehillah</h1>
     </div>
+    <#dropZone onDrop="{drop($event)}">
+       <@dragDisplay>Drop this file here</@dragDisplay>
+       <@normalDisplay>Drag an OpenSong file here</@normalDisplay>
+    </#dropZone>
+    <#songEditor song="{data.song}"/>
   </div>
 </template>
 

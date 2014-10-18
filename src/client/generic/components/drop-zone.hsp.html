@@ -1,0 +1,60 @@
+<script>
+var klass = require("hsp/klass");
+var DropZoneCtrl = klass({
+   $attributes: {
+      onDrop: {
+         type: "callback"
+      },
+      dragDisplay: {
+         type: "template"
+      },
+      normalDisplay: {
+         type: "template",
+         defaultContent: true
+      }
+   },
+   $init: function () {
+      this.dragEnd = this.dragEnd.bind(this);
+   },
+   dragEnd: function () {
+      this.dragging = null;
+   },
+   dragOver: function (event) {
+      if (this.dragging) {
+         clearTimeout(this.dragging);
+      }
+      this.dragging = setTimeout(this.dragEnd, 300);
+      event.preventDefault();
+   },
+   drop: function (event) {
+      event.preventDefault();
+      this.onDrop({
+         dataTransfer: event.dataTransfer
+      });
+   }
+});
+</script>
+
+<template id="dropZone" ctrl="DropZoneCtrl as ctrl">
+<div ondragover="{ctrl.dragOver($event)}" ondrop="{ctrl.drop($event)}">
+   {if ctrl.dragging}
+      <div class="alert alert-info">
+         {if ctrl.dragDisplay}
+            <#ctrl.dragDisplay />
+         {/if}
+      </div>
+   {else}
+   <div class="panel panel-default">
+     <div class="panel-body">
+         {if ctrl.normalDisplay}
+            <#ctrl.normalDisplay />
+         {/if}
+     </div>
+     </div>
+    {/if}
+</div>
+</template>
+
+<script>
+module.exports = dropZone;
+</script>
