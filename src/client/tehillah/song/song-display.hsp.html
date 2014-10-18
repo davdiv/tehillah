@@ -1,22 +1,45 @@
 <script>
-var stringifySong = require("./opensong-export").stringifySong;
+var klass = require("hsp/klass");
+var SongDisplayCtrl = klass({
+	$attributes: {
+		"song": {
+			type: "object",
+			binding: "1-way"
+		},
+		"readonly": {
+			type: "boolean",
+			binding: "1-way",
+			defaultValue: false
+		},
+		"selectedVerse": {
+			type: "int",
+			binding: "2-way",
+			defaultValue: -1
+		}
+	},
+	clickVerse: function(index) {
+		if (!this.readonly) {
+			this.selectedVerse = index;
+		}
+	}
+});
 </script>
 
-<template id="displaySong" args="song">
+<template id="displaySong" ctrl="SongDisplayCtrl as ctrl">
 <div>
-<h3>{song.title} <small>{song.author}</small></h3>
-{if song.lyrics}
-{foreach verse in song.lyrics}
-<p>
+<h3>{ctrl.song.title} <small>{ctrl.song.author}</small></h3>
+{if ctrl.song.lyrics}
+{foreach index,verse in ctrl.song.lyrics}
+<p class="song-verse {ctrl.readonly?'':'clickable'} {ctrl.selectedVerse == index?'active':''}" onclick="{ctrl.clickVerse(index)}">
 {foreach line in verse.lines}
 {foreach lyrics in line.lyrics}{lyrics}{/foreach}<br>
 {/foreach}
 </p>
 {/foreach}
 {/if}
-{if song.copyright}
+{if ctrl.song.copyright}
 <p class="text-muted">
-<small>{song.copyright}</small>
+<small>{ctrl.song.copyright}</small>
 </p>
 {/if}
 <div><h4></h4></div>

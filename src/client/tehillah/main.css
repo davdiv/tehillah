@@ -20,3 +20,16 @@
 .monospace {
 	font-family: monospace;
 }
+
+.song-verse {
+	padding: 5px;
+}
+
+.song-verse.clickable:hover {
+	background-color: #f5f5f5;
+	cursor: pointer;
+}
+
+.song-verse.active {
+	font-weight: bold;
+}
