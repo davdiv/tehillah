@@ -6,35 +6,42 @@ var SongDisplayCtrl = klass({
 			type: "object",
 			binding: "1-way"
 		},
-		"readonly": {
-			type: "boolean",
-			binding: "1-way",
-			defaultValue: false
+		"onVerseClick": {
+			type: "callback"
 		},
 		"selectedVerse": {
 			type: "int",
-			binding: "2-way",
+			binding: "1-way",
 			defaultValue: -1
-		}
-	},
-	clickVerse: function(index) {
-		if (!this.readonly) {
-			this.selectedVerse = index;
+		},
+		"showSelectedVerseOnly": {
+			type: "boolean",
+			binding: "1-way",
+			defaultValue: false
 		}
 	}
 });
 </script>
 
-<template id="displaySong" ctrl="SongDisplayCtrl as ctrl">
-<div>
-<h3>{ctrl.song.title} <small>{ctrl.song.author}</small></h3>
-{if ctrl.song.lyrics}
-{foreach index,verse in ctrl.song.lyrics}
-<p class="song-verse {ctrl.readonly?'':'clickable'} {ctrl.selectedVerse == index?'active':''}" onclick="{ctrl.clickVerse(index)}">
+<template id="displayVerse" args="ctrl, verseIndex">
+{let verse = ctrl.song.lyrics[verseIndex]}
+{if verse}
+<p class="song-verse {ctrl.onVerseClick.empty?'':'clickable'} {ctrl.selectedVerse == verseIndex && !ctrl.showSelectedVerseOnly?'active':''}" onclick="{ctrl.onVerseClick({index: verseIndex})}">
 {foreach line in verse.lines}
 {foreach lyrics in line.lyrics}{lyrics}{/foreach}<br>
 {/foreach}
 </p>
+{/if}
+</template>
+
+<template id="displaySong" ctrl="SongDisplayCtrl as ctrl">
+<div>
+<h3>{ctrl.song.title} <small>{ctrl.song.author}</small></h3>
+{if ctrl.showSelectedVerseOnly}
+<#displayVerse ctrl="{ctrl}" verseIndex="{ctrl.selectedVerse}"/>
+{else}
+{foreach verseIndex,verse in ctrl.song.lyrics}
+<#displayVerse ctrl="{ctrl}" verseIndex="{verseIndex}"/>
 {/foreach}
 {/if}
 {if ctrl.song.copyright}

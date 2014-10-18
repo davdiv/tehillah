@@ -29,6 +29,25 @@ module.exports = function(argv) {
    var app = express();
    var server = http.createServer(app);
    var io = socketIO(server);
+   var currentData = {
+	   song: {
+		   lyrics:[]
+		},
+		selectedVerse: -1
+   };
+
+   io.on("connect", function (socket) {
+		socket.emit("change", currentData);
+		socket.on("change", function (event) {
+			if (event.song) {
+				currentData.song = event.song;
+			}
+			if (event.selectedVerse !== null) {
+				currentData.selectedVerse = event.selectedVerse;
+			}
+			io.emit("change", currentData);
+		});
+	});
 
    app.use(express.static(path.join(__dirname,"../client")));
    app.use("/lib/bootstrap", express.static(path.join(__dirname,"../../lib/bootstrap")));

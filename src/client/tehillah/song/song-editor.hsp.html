@@ -27,11 +27,13 @@ var EditorCtrl = klass({
          binding: "1-way"
       }
    },
-   $init: function () {
-      this.$onSongChange();
-   },
-   $onSongChange: function () {
-      this.lyrics = openSongStringifyLyrics(this.song.lyrics);
+	$init: function () {
+		this.$onSongChange();
+	},
+	$onSongChange: function () {
+		if (this.song) {
+			this.lyrics = openSongStringifyLyrics(this.song.lyrics);
+		}
    },
    $onLyricsChange: function () {
       var lyrics = openSongParseLyrics(this.lyrics);

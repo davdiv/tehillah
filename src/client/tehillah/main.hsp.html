@@ -21,43 +21,117 @@ var songEditor = require("./song/song-editor.hsp.html");
 var displaySong = require("./song/song-display.hsp.html");
 var dropZone = require("../generic/components/drop-zone.hsp.html");
 var readFileAsText = require("../generic/functions/readFileAsText");
+var copy = require("../generic/functions/copy");
 var songImport = require("./song/opensong-import").parseFile;
 
 var data = {
-song:{lyrics:[]}
+	connected: false,
+	admin: location.search.indexOf("admin=true") > -1,
+	selectedVerse: -1,
+	song:{lyrics:[]},
+	editedSong: null
+};
+
+var socket = io();
+
+socket.on("connect", function() {
+	data.connected = true;
+});
+socket.on("disconnect", function () {
+	data.connected = false;
+});
+socket.on("change", function(event) {
+	if (event.song) {
+		data.song = event.song;
+	}
+	if (event.selectedVerse != null) {
+		data.selectedVerse = event.selectedVerse;
+	}
+});
+
+var songEditNew = function () {
+	data.editedSong = {lyrics:[]};
+};
+
+var songEditStart = function () {
+	data.editedSong = copy(data.song);
+};
+
+var songEditCancel = function () {
+	data.editedSong = null;
+};
+
+var songEditValidate = function () {
+	socket.emit("change", {
+		song: copy(data.editedSong)
+	});
+	data.editedSong = null;
+};
+
+var clickVerse = function (event) {
+	socket.emit("change", {
+		selectedVerse: event.index
+	});
 };
 
 var drop = function(event) {
-var file = event.dataTransfer.files[0];
-readFileAsText(file).then(function (textFile) {
-var song = songImport(textFile);
-data.song = song;
-}).done();
+	var file = event.dataTransfer.files[0];
+		readFileAsText(file).then(function (textFile) {
+		var song = songImport(textFile);
+		socket.emit("change", {
+			song: song,
+			selectedVerse: -1
+		});
+	}).done();
 };
-
 </script>
 
 <template id="main">
   <div class="container-fluid">
-    <div class="page-header">
-      <h1>Tehillah</h1>
-    </div>
-    <#dropZone onDrop="{drop($event)}">
-       <@dragDisplay>Drop this file here</@dragDisplay>
-       <@normalDisplay>Drag an OpenSong file here</@normalDisplay>
-    </#dropZone>
-    <div class="row">
-    <div class="col-md-6">
-    <div class="container-fluid">
-    <#songEditor song="{data.song}"/>
-    </div>
-    </div>
-    <div class="col-md-6">
-    <div class="container-fluid">
-    <#displaySong song="{data.song}"/>
-    </div>
-    </div>
-    </div>
+		<div class="page-header">
+			<h1>Tehillah</h1>
+		</div>
+	{if ! data.connected}
+		<div class="alert alert-danger">	Not connected !</div>
+	{/if}
+    {if data.admin}
+		<#dropZone onDrop="{drop($event)}">
+		<@dragDisplay>Drop this file here</@dragDisplay>
+		<@normalDisplay>Drag an OpenSong file here</@normalDisplay>
+		</#dropZone>
+		<div class="row">
+		{if data.editedSong}
+			<div class="col-md-6">
+			<div class="panel panel-default">
+			<div class="panel-body">
+				<#songEditor song="{data.editedSong}"/>
+				<p class="text-right">
+					<button class="btn btn-default" onclick="{songEditCancel()}">Cancel</button>
+					{' '}<button class="btn btn-primary" onclick="{songEditValidate()}">OK</button>
+				</p>
+			</div>
+			</div>
+			</div>
+		{/if}
+		<div class="col-md-6">
+		<div class="container-fluid">
+			{if ! data.editedSong}
+			<div class="btn-group btn-group-sm pull-right">
+				<button onclick="{songEditNew()}" class="btn">
+					<span class="glyphicon glyphicon-file"></span>
+				</button>
+				<button onclick="{songEditStart()}" class="btn">
+					<span class="glyphicon glyphicon-edit"></span>
+				</button>
+			</div>
+			{/if}
+			<#displaySong song="{data.song}" onVerseClick="{clickVerse($event)}" selectedVerse="{data.selectedVerse}"/>
+		</div>
+		</div>
+		</div>
+    {else}
+		<#displaySong song="{data.song}" showSelectedVerseOnly="true" selectedVerse="{data.selectedVerse}"/>
+    {/if}
   </div>
 </template>
 
