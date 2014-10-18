@@ -21,13 +21,57 @@ var getXMLTagContent = function (doc, selector) {
 	return element ? element.textContent : "";
 };
 
-module.exports = function (text) {
+var parseLyrics = function (lyrics) {
+	var result = [];
+	var curVerse = null;
+	var addVerse = function (header) {
+		curVerse = {
+			header: header,
+			lines: []
+		};
+		result.push(curVerse);
+	};
+	var checkCurVerse = function () {
+		if (!curVerse) {
+			addVerse();
+		}
+	};
+	lyrics = lyrics.replace(/\r\n/g,"\n");
+	var lines = lyrics.split("\n");
+	for (var i = 0, l = lines.length; i < l; i++) {
+		var curLine = lines[i];
+		var firstChar = curLine.charAt(0);
+		if (firstChar == "[") {
+			addVerse(curLine.slice(1).replace(/\]\s*$/, "").trim());
+		} else if (firstChar == ".") {
+			// chords: not currently supported
+			// checkCurVerse();
+		} else if (/^[ 1-9]$/.test(firstChar)) {
+			// lyrics
+			var line = curLine.slice(1).replace(/\|\|\s*$/,"").trim();
+			if (line) {
+				checkCurVerse();
+				curVerse.lines.push({
+					lyrics: [line]
+				});
+			}
+		}
+	}
+	return result;
+};
+
+var parseFile = function (text) {
 	var parser = new DOMParser();
 	var doc = parser.parseFromString(text, "text/xml");
 	return {
 		title: getXMLTagContent(doc, "title"),
 		author: getXMLTagContent(doc, "author"),
 		copyright: getXMLTagContent(doc, "copyright"),
-		lyrics: getXMLTagContent(doc, "lyrics")
+		lyrics: parseLyrics(getXMLTagContent(doc, "lyrics"))
 	};
+};
+
+module.exports = {
+	parseLyrics: parseLyrics,
+	parseFile: parseFile
 };

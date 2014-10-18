@@ -16,30 +16,54 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<template id="editor" args="song">
+<script>
+var klass = require("hsp/klass");
+var openSongParseLyrics = require("./opensong-import").parseLyrics;
+var openSongStringifyLyrics = require("./opensong-export").stringifyLyrics;
+var EditorCtrl = klass({
+   $attributes: {
+      "song": {
+         type: "object",
+         binding: "1-way"
+      }
+   },
+   $init: function () {
+      this.$onSongChange();
+   },
+   $onSongChange: function () {
+      this.lyrics = openSongStringifyLyrics(this.song.lyrics);
+   },
+   $onLyricsChange: function () {
+      var lyrics = openSongParseLyrics(this.lyrics);
+      this.song.lyrics = lyrics;
+   }
+});
+</script>
+
+<template id="editor" ctrl="EditorCtrl as ctrl">
 <form class="form-horizontal" role="form">
   <div class="form-group">
     <label class="col-sm-2 control-label">Title</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" model="{song.title}">
+      <input type="text" class="form-control" model="{ctrl.song.title}">
     </div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">Author</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" model="{song.author}">
+      <input type="text" class="form-control" model="{ctrl.song.author}">
     </div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">Lyrics</label>
     <div class="col-sm-10">
-       <textarea class="form-control monospace" rows="20" model="{song.lyrics}"></textarea>
+       <textarea class="form-control monospace" rows="20" model="{ctrl.lyrics}"></textarea>
     </div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">Copyright</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" model="{song.copyright}">
+      <input type="text" class="form-control" model="{ctrl.song.copyright}">
     </div>
   </div>
 </form>

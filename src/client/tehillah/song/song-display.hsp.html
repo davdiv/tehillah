@@ -1,0 +1,28 @@
+<script>
+var stringifySong = require("./opensong-export").stringifySong;
+</script>
+
+<template id="displaySong" args="song">
+<div>
+<h3>{song.title} <small>{song.author}</small></h3>
+{if song.lyrics}
+{foreach verse in song.lyrics}
+<p>
+{foreach line in verse.lines}
+{foreach lyrics in line.lyrics}{lyrics}{/foreach}<br>
+{/foreach}
+</p>
+{/foreach}
+{/if}
+{if song.copyright}
+<p class="text-muted">
+<small>{song.copyright}</small>
+</p>
+{/if}
+<div><h4></h4></div>
+</div>
+</template>
+
+<script>
+module.exports = displaySong;
+</script>

@@ -18,12 +18,13 @@
 -->
 <script>
 var songEditor = require("./song/song-editor.hsp.html");
+var displaySong = require("./song/song-display.hsp.html");
 var dropZone = require("../generic/components/drop-zone.hsp.html");
 var readFileAsText = require("../generic/functions/readFileAsText");
-var songImport = require("./song/opensong-import");
+var songImport = require("./song/opensong-import").parseFile;
 
 var data = {
-song : {}
+song:{lyrics:[]}
 };
 
 var drop = function(event) {
@@ -45,7 +46,18 @@ data.song = song;
        <@dragDisplay>Drop this file here</@dragDisplay>
        <@normalDisplay>Drag an OpenSong file here</@normalDisplay>
     </#dropZone>
+    <div class="row">
+    <div class="col-md-6">
+    <div class="container-fluid">
     <#songEditor song="{data.song}"/>
+    </div>
+    </div>
+    <div class="col-md-6">
+    <div class="container-fluid">
+    <#displaySong song="{data.song}"/>
+    </div>
+    </div>
+    </div>
   </div>
 </template>
 
