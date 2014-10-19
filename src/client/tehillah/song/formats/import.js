@@ -17,28 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.monospace {
-	font-family: monospace;
-}
+var formats = [ require("./opensong-import"), require("./chordpro-import") ];
 
-.song-verse {
-	padding: 5px;
-}
-
-.song-verse.clickable:hover {
-	background-color: #f5f5f5;
-	cursor: pointer;
-}
-
-.song-verse.active {
-	font-weight: bold;
-}
-
-table.song-verse-line {
-	white-space: pre;
-}
-
-.chords {
-	font-weight: bold;
-	color: #31708f;
-}
+module.exports = function (fileContent) {
+    for (var i = 0, l = formats.length; i < l; i++) {
+        var curFormat = formats[i];
+        if (curFormat.detect(fileContent)) {
+            return curFormat.parse(fileContent);
+        }
+    }
+    return null;
+};

@@ -18,8 +18,8 @@
 -->
 <script>
 var klass = require("hsp/klass");
-var openSongParseLyrics = require("./opensong-import").parseLyrics;
-var openSongStringifyLyrics = require("./opensong-export").stringifyLyrics;
+var openSongParseLyrics = require("./formats/opensong-import").parseLyrics;
+var openSongStringifyLyrics = require("./formats/opensong-export").stringifyLyrics;
 var EditorCtrl = klass({
    $attributes: {
       "song": {

@@ -17,28 +17,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.monospace {
-	font-family: monospace;
-}
+var chordsDoReMi = require("./chords-do-re-mi");
+var chordsTranspose = require("./chords-transpose");
 
-.song-verse {
-	padding: 5px;
-}
-
-.song-verse.clickable:hover {
-	background-color: #f5f5f5;
-	cursor: pointer;
-}
-
-.song-verse.active {
-	font-weight: bold;
-}
-
-table.song-verse-line {
-	white-space: pre;
-}
-
-.chords {
-	font-weight: bold;
-	color: #31708f;
-}
+module.exports = function (chord, displayChord) {
+    var transpose = displayChord.transpose;
+    if (transpose) {
+        chord = chordsTranspose(chord, transpose.level, transpose.bemol);
+    }
+    if (displayChord.doReMi) {
+        chord = chordsDoReMi(chord);
+    }
+    return chord;
+};

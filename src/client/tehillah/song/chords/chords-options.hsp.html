@@ -1,0 +1,100 @@
+<!--
+    Tehillah: Web-based application to manage and display worship songs.
+    https://github.com/davdiv/tehillah
+    Copyright (C) 2014 DivDE <divde@free.fr>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<script>
+    var klass = require("hsp/klass");
+    var ChordsOptionsCtrl = klass({
+        $attributes : {
+            options : {
+                type : "object",
+                binding : "2-way"
+            }
+        },
+        $init : function () {
+            this.showChords = false;
+            this.doReMi = "CDE";
+            this.transpose = false;
+            this.transposeLevel = "0";
+            this.useBemol = false;
+        },
+        apply : function () {
+            this.options = this.showChords ? {
+                doReMi : this.doReMi == "doReMi",
+                transpose : this.transpose ? {
+                    level : parseInt(this.transposeLevel),
+                    bemol : this.useBemol
+                } : null
+            } : null;
+        }
+    });
+</script>
+
+<template id="chordsOptions" ctrl="ChordsOptionsCtrl as ctrl">
+<div class="form panel panel-default">
+	<div class="panel-heading">Chords display options</div>
+	<div class="panel-body">
+		<div class="checkbox">
+			<label> <input type="checkbox" model="{ctrl.showChords}">
+				Show chords
+			</label>
+		</div>
+		{if ctrl.showChords}
+		<div class="form-group">
+			<label>Chords style</label> <select class="form-control"
+				model="{ctrl.doReMi}">
+				<option value="CDE">C / D / E</option>
+				<option value="doReMi">Do / Ré / Mi</option>
+			</select>
+		</div>
+		<div class="checkbox">
+			<label> <input type="checkbox" model="{ctrl.transpose}">
+				Transpose
+			</label>
+		</div>
+		{if ctrl.transpose}
+		<div class="form-group">
+			<label>Level</label> <select class="form-control"
+				model="{ctrl.transposeLevel}">
+				<option value="6">+6</option>
+				<option value="5">+5</option>
+				<option value="4">+4</option>
+				<option value="3">+3</option>
+				<option value="2">+2</option>
+				<option value="1">+1</option>
+				<option value="0">0</option>
+				<option value="-1">-1</option>
+				<option value="-2">-2</option>
+				<option value="-3">-3</option>
+				<option value="-4">-4</option>
+				<option value="-5">-5</option>
+			</select>
+		</div>
+		<div class="checkbox">
+			<label> <input type="checkbox" model="{ctrl.useBemol}">
+				Use bemol
+			</label>
+		</div>
+		{/if} {/if}
+		<button class="btn btn-default btn-sm" onclick="{ctrl.apply()}">Apply</button>
+	</div>
+</div>
+</template>
+
+<script>
+    module.exports = chordsOptions;
+</script>

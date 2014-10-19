@@ -17,19 +17,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script>
+var chordsOptions = require("./song/chords/chords-options.hsp.html");
 var songEditor = require("./song/song-editor.hsp.html");
 var displaySong = require("./song/song-display.hsp.html");
 var dropZone = require("../generic/components/drop-zone.hsp.html");
 var readFileAsText = require("../generic/functions/readFileAsText");
 var copy = require("../generic/functions/copy");
-var songImport = require("./song/opensong-import").parseFile;
+var songImport = require("./song/formats/import");
 
 var data = {
 	connected: false,
 	admin: location.search.indexOf("admin=true") > -1,
 	selectedVerse: -1,
 	song:{lyrics:[]},
-	editedSong: null
+	editedSong: null,
+	displayChords: null
 };
 
 var socket = io();
@@ -76,6 +78,9 @@ var clickVerse = function (event) {
 
 var drop = function(event) {
 	var file = event.dataTransfer.files[0];
+	if (!file ) {
+	    return;
+	}
 		readFileAsText(file).then(function (textFile) {
 		var song = songImport(textFile);
 		socket.emit("change", {
@@ -94,10 +99,11 @@ var drop = function(event) {
 	{if ! data.connected}
 		<div class="alert alert-danger">	Not connected !</div>
 	{/if}
+	<#chordsOptions options="{data.displayChords}"/>
     {if data.admin}
 		<#dropZone onDrop="{drop($event)}">
 		<@dragDisplay>Drop this file here</@dragDisplay>
-		<@normalDisplay>Drag an OpenSong file here</@normalDisplay>
+		<@normalDisplay>Drag an OpenSong or ChordPro file here</@normalDisplay>
 		</#dropZone>
 		<div class="row">
 		{if data.editedSong}
@@ -125,12 +131,12 @@ var drop = function(event) {
 				</button>
 			</div>
 			{/if}
-			<#displaySong song="{data.song}" onVerseClick="{clickVerse($event)}" selectedVerse="{data.selectedVerse}"/>
+			<#displaySong song="{data.song}" onVerseClick="{clickVerse($event)}" selectedVerse="{data.selectedVerse}" displayChords="{data.displayChords}"/>
 		</div>
 		</div>
 		</div>
     {else}
-		<#displaySong song="{data.song}" showSelectedVerseOnly="true" selectedVerse="{data.selectedVerse}"/>
+		<#displaySong song="{data.song}" showSelectedVerseOnly="true" selectedVerse="{data.selectedVerse}" displayChords="{data.displayChords}"/>
     {/if}
   </div>
 </template>

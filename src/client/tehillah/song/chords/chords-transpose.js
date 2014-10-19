@@ -17,28 +17,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.monospace {
-	font-family: monospace;
-}
+var notes = [ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "Db", "D", "Eb", "E", "F", "Gb",
+    "G", "Ab", "A", "Bb", "B" ];
 
-.song-verse {
-	padding: 5px;
-}
-
-.song-verse.clickable:hover {
-	background-color: #f5f5f5;
-	cursor: pointer;
-}
-
-.song-verse.active {
-	font-weight: bold;
-}
-
-table.song-verse-line {
-	white-space: pre;
-}
-
-.chords {
-	font-weight: bold;
-	color: #31708f;
-}
+module.exports = function (chord, capo, bemol) {
+    return chord.replace(/(^|\/)([A-G](b|#)?)/g, function (match, begin, note) {
+        var index = notes.indexOf(note);
+        var newIndex = index + capo;
+        newIndex = newIndex % 12;
+        if (newIndex < 0) {
+            newIndex += 12;
+        }
+        if (bemol) {
+            newIndex += 12;
+        }
+        return begin + notes[newIndex];
+    });
+};
