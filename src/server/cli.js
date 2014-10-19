@@ -22,41 +22,43 @@ var minimist = require("minimist");
 var express = require("express");
 var socketIO = require("socket.io");
 
-module.exports = function(argv) {
-   argv = minimist(argv);
-   var port = parseInt(argv.port || process.env.PORT || "8080", 10);
+var defaultSong = require("./defaultSong");
 
-   var app = express();
-   var server = http.createServer(app);
-   var io = socketIO(server);
-   var currentData = {
-	   song: {
-		   lyrics:[]
-		},
-		selectedVerse: -1
-   };
+module.exports = function (argv) {
+    argv = minimist(argv);
+    var port = parseInt(argv.port || process.env.PORT || "8080", 10);
 
-   io.on("connect", function (socket) {
-		socket.emit("change", currentData);
-		socket.on("change", function (event) {
-			if (event.song) {
-				currentData.song = event.song;
-			}
-			if (event.selectedVerse !== null) {
-				currentData.selectedVerse = event.selectedVerse;
-			}
-			io.emit("change", currentData);
-		});
-	});
+    var app = express();
+    var server = http.createServer(app);
+    var io = socketIO(server);
+    var currentData = {
+        song : defaultSong || {
+            lyrics : []
+        },
+        selectedVerse : 0
+    };
 
-   app.use(express.static(path.join(__dirname,"../client")));
-   app.use("/lib/bootstrap", express.static(path.join(__dirname,"../../lib/bootstrap")));
-   app.use("/lib/noder-js", express.static(path.dirname(require.resolve("noder-js/dist/browser/noder.js"))));
-   app.use("/lib/hashspace", express.static(path.dirname(require.resolve("hashspace/dist/hashspace-noder.js"))));
+    io.on("connect", function (socket) {
+        socket.emit("change", currentData);
+        socket.on("change", function (event) {
+            if (event.song) {
+                currentData.song = event.song;
+            }
+            if (event.selectedVerse !== null) {
+                currentData.selectedVerse = event.selectedVerse;
+            }
+            io.emit("change", currentData);
+        });
+    });
 
-   server.listen(port);
-   server.on("listening",function() {
-      var address = server.address();
-      console.log("Listening on %s:%d", address.address, address.port);
-   });
+    app.use(express.static(path.join(__dirname, "../client")));
+    app.use("/lib/bootstrap", express.static(path.join(__dirname, "../../lib/bootstrap")));
+    app.use("/lib/noder-js", express.static(path.dirname(require.resolve("noder-js/dist/browser/noder.js"))));
+    app.use("/lib/hashspace", express.static(path.dirname(require.resolve("hashspace/dist/hashspace-noder.js"))));
+
+    server.listen(port);
+    server.on("listening", function () {
+        var address = server.address();
+        console.log("Listening on %s:%d", address.address, address.port);
+    });
 };
