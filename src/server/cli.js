@@ -16,49 +16,45 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var path = require("path");
-var http = require("http");
-var minimist = require("minimist");
-var express = require("express");
-var socketIO = require("socket.io");
 
-var defaultSong = require("./defaultSong");
+var http = require("http");
+var https = require("https");
+var fs = require("fs");
+var minimist = require("minimist");
+var mongodb = require("mongodb");
+var Server = require("./server");
 
 module.exports = function (argv) {
-    argv = minimist(argv);
-    var port = parseInt(argv.port || process.env.PORT || "8080", 10);
-
-    var app = express();
-    var server = http.createServer(app);
-    var io = socketIO(server);
-    var currentData = {
-        song : defaultSong || {
-            lyrics : []
-        },
-        selectedVerse : 0
-    };
-
-    io.on("connect", function (socket) {
-        socket.emit("change", currentData);
-        socket.on("change", function (event) {
-            if (event.song) {
-                currentData.song = event.song;
-            }
-            if (event.selectedVerse !== null) {
-                currentData.selectedVerse = event.selectedVerse;
-            }
-            io.emit("change", currentData);
-        });
+    argv = minimist(argv, {
+        "default" : {
+            pfx : "",
+            port : process.env.PORT || "8080",
+            database : process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb://localhost/default"
+        }
     });
+    var pfx = argv.pfx ? fs.readFileSync(argv.pfx) : null;
+    var port = parseInt(argv.port, 10);
+    var databaseURI = argv.database;
 
-    app.use(express.static(path.join(__dirname, "../client")));
-    app.use("/lib/bootstrap", express.static(path.join(__dirname, "../../lib/bootstrap")));
-    app.use("/lib/noder-js", express.static(path.dirname(require.resolve("noder-js/dist/browser/noder.js"))));
-    app.use("/lib/hashspace", express.static(path.dirname(require.resolve("hashspace/dist/hashspace-noder.js"))));
+    console.log("Connecting to the database at %s ...", databaseURI);
+    mongodb.MongoClient.connect(argv.database, function (err, database) {
+        if (err) {
+            console.error("Could not connect to the database at %s !", databaseURI);
+            return;
+        }
+        console.log("Successfully connected to %s.", databaseURI);
 
-    server.listen(port);
-    server.on("listening", function () {
-        var address = server.address();
-        console.log("Listening on %s:%d", address.address, address.port);
+        var httpServer = pfx ? https.createServer({
+            pfx : pfx
+        }) : http.createServer();
+
+        var server = new Server(httpServer, database);
+
+        httpServer.listen(port);
+        httpServer.on("listening", function () {
+            var address = httpServer.address();
+            console.log("Listening on %s:%d", address.address, address.port);
+        });
+
     });
 };

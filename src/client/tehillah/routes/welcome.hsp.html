@@ -17,13 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script>
-var chordsOptions = require("./song/chords/chords-options.hsp.html");
-var songEditor = require("./song/song-editor.hsp.html");
-var displaySong = require("./song/song-display.hsp.html");
-var dropZone = require("../generic/components/drop-zone.hsp.html");
-var readFileAsText = require("../generic/functions/readFileAsText");
-var copy = require("../generic/functions/copy");
-var songImport = require("./song/formats/import");
+var chordsOptions = require("../song/chords/chords-options.hsp.html");
+var songEditor = require("../song/song-editor.hsp.html");
+var displaySong = require("../song/song-display.hsp.html");
+var dropZone = require("../../generic/components/drop-zone.hsp.html");
+var readFileAsText = require("../../generic/functions/read-file-as-text");
+var copy = require("../../generic/functions/copy");
+var songImport = require("../song/formats/import");
 
 var data = {
 	connected: false,
@@ -97,7 +97,7 @@ var drop = function(event) {
 			<h1>Tehillah</h1>
 		</div>
 	{if ! data.connected}
-		<div class="alert alert-danger">	Not connected !</div>
+		<div class="alert alert-danger">Not connected !</div>
 	{/if}
 	<#chordsOptions options="{data.displayChords}"/>
     {if data.admin}
@@ -142,5 +142,8 @@ var drop = function(event) {
 </template>
 
 <script>
-module.exports = main;
+module.exports = function(currentPage) {
+    currentPage.template = main;
+    currentPage.data = data;
+};
 </script>

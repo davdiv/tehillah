@@ -1,0 +1,65 @@
+<!doctype html>{{= "\n"}}
+<!--{{= "\n"}}
+    Tehillah: Web-based application to manage and display worship songs.{{= "\n"}}
+    https://github.com/davdiv/tehillah{{= "\n"}}
+    Copyright (C) 2014 DivDE <divde@free.fr> {{= "\n"}}
+{{= "\n"}}
+    This program is free software: you can redistribute it and/or modify{{= "\n"}}
+    it under the terms of the GNU Affero General Public License as published by{{= "\n"}}
+    the Free Software Foundation, either version 3 of the License, or{{= "\n"}}
+    (at your option) any later version.{{= "\n"}}
+{{= "\n"}}
+    This program is distributed in the hope that it will be useful,{{= "\n"}}
+    but WITHOUT ANY WARRANTY; without even the implied warranty of{{= "\n"}}
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the{{= "\n"}}
+    GNU Affero General Public License for more details.{{= "\n"}}
+{{= "\n"}}
+    You should have received a copy of the GNU Affero General Public License{{= "\n"}}
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.{{= "\n"}}
+-->{{= "\n"}}
+<html>
+<head>
+<title>Tehillah</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{{= it.staticsPath }}/tehillah/main.css">
+{{ if (it.livereload) { }}
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+{{ } }}
+<script src="/lib/noder-js/noder.js">{
+   resolver: {
+       "default": {
+           "qs": {}
+       }
+   },
+   packaging: {
+      baseUrl: "{{= it.staticsPath }}/",
+      {{ if (it.dev) { }}
+      preprocessors: [{
+          pattern: /\.hsp\.html$/,
+          module: "hsp/compiler/compile"
+      }, {
+          pattern: /\.js$/,
+          module: "hsp/transpiler/transpile"
+      }]
+      {{ } else { }}
+      packagesMap: {
+          "**": "tehillah.js"
+      }
+      {{ } }}
+   }
+}</script>
+<script src="/lib/hashspace/hashspace-noder.js"></script>
+{{ if (it.dev) { }}
+<script src="/lib/hashspace/hashspace-noder-compiler.js"></script>
+{{ } }}
+<script src="/socket.io/socket.io.js"></script>
+<script type="application/x-noder">
+var routing = require("tehillah/routing.hsp.html");
+routing(document.body)
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!--
+    Tehillah: Web-based application to manage and display worship songs.
+    https://github.com/davdiv/tehillah
+    Copyright (C) 2014 DivDE <divde@free.fr>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<script>
+    var asyncRequire = require("noder-js/asyncRequire");
+    var page = require("page");
+    var qs = require("qs");
+    var routes = require("../common/routes");
+    var data = {};
+
+    routes.forEach(function (curRoute) {
+        page(curRoute.path, function (ctx) {
+            var currentPage = {
+                route : curRoute,
+                path : ctx.path,
+                params : ctx.params,
+                query : qs.parse(ctx.querystring),
+                template : null,
+                data : null
+            };
+            asyncRequire(curRoute.module).spreadSync(function (routeModule) {
+                routeModule(currentPage);
+            }).done();
+            data.currentPage = currentPage;
+        });
+    });
+    page();
+</script>
+
+<template id="main">
+{let currentPage = data.currentPage, template = currentPage.template}
+{if template}
+<#template data="{currentPage.data}"/>
+{/if}
+</template>
+
+<script>
+    module.exports = function (domElt) {
+        main().render(domElt);
+    };
+</script>
