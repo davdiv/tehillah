@@ -1,0 +1,158 @@
+<!--
+    Tehillah: Web-based application to manage and display worship songs.
+    https://github.com/davdiv/tehillah
+    Copyright (C) 2014 DivDE <divde@free.fr>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<script>
+
+    var klass = require("hsp/klass");
+
+    var flagsUp = [ "\ue21d", "\ue21e", "\ue21f", "\ue220", "\ue221" ];
+    var flagsDown = [ "\ue222", "\ue223", "\ue224", "\ue225", "\ue226" ];
+    var rests = ["\ue107","\ue100", "\ue101","\ue108","\ue10a","\ue10b","\ue10c","\ue10d","\ue10e"];
+    
+    var clefs = {
+        "F" : {
+            level : 8,
+            text : "\ue171"
+        },
+        "G" : {
+            level : 4,
+            text : "\ue173"
+        },
+        "C" : {
+            level : 6,
+            text : "\ue16f"
+        }
+    };
+    var alterations = {
+        "b" : "\ue11b",
+        "#" : "\ue10f",
+        "/" : "\ue117"
+    };
+
+    var MusicSheetCtrl = klass({
+        $attributes : {
+            noteSize : {
+                type : "int",
+                defaultValue : 5
+            },
+            width : {
+                type : "int",
+                defaultValue : 1300
+            },
+            line : {
+                type : "object",
+                binding : "1-way"
+            }
+        },
+        getNoteY : function (level) {
+            return (18 - level) * this.noteSize;
+        },
+        getExtraLines : function (level) {
+            var start, end;
+            if (level <= 0) {
+                start = level - (level % 2); // note that level % 2 <= 0
+                end = 0;
+            } else if (level >=12) {
+                start = 12;
+                end = level;
+            } else {
+                return [];
+            }
+            var res = [];
+            for (var i = start; i <= end; i += 2) {
+                res.push(this.getNoteY(i));
+            }
+            return res;
+        },
+        getNoteInfo : function (note) {
+            var baseY = this.getNoteY(note.level);
+            var res = {
+                baseY : baseY,
+                extraLines : this.getExtraLines(note.level),
+                alteration : alterations[note.alteration]
+            };
+            var barOffset = 0;
+            var flags = null;
+            if (note.duration > 0) {
+                res.barDirection = note.level > 5 ? -1 : 1;
+                flags = res.barDirection > 0 ? flagsUp : flagsDown;
+            }
+            if (note.duration == 0) {
+                res.text = "\ue1cd";
+            } else if (note.duration == 1) {
+                res.text = "\ue1ce";
+            } else {
+                res.text = "\ue1cf";
+                res.flagText = flags[note.duration - 2];
+            }
+            return res;
+        }
+
+    });
+</script>
+<template id="scopeLine" args="note, ctrl">
+{let y=ctrl.getNoteY(note)} 
+<line x1="0" x2="{ctrl.width}" y1="{y}" y2="{y}" stroke="black" stroke-width="1"/>
+</template>
+<template id="musicSheet" ctrl="MusicSheetCtrl as ctrl">
+<svg style="font-family: 'beethoven';font-size: {8 * ctrl.noteSize}px;" width="{ctrl.width}" height="{25*ctrl.noteSize}">
+<#scopeLine note="{10}" ctrl="{ctrl}"/>
+<#scopeLine note="{8}" ctrl="{ctrl}"/>
+<#scopeLine note="{6}" ctrl="{ctrl}"/>
+<#scopeLine note="{4}" ctrl="{ctrl}"/>
+<#scopeLine note="{2}" ctrl="{ctrl}"/>
+
+{foreach index,item in ctrl.line}
+{let baseX = index * ctrl.noteSize * 9 + 3 * ctrl.noteSize}
+{if item.type == "clef"}
+{let clef = clefs[item.clef]}
+<text x="{baseX - 2.5 * ctrl.noteSize}" y="{ctrl.getNoteY(clef.level)}">{clef.text}</text>
+{else if item.type == "rest"}
+<text x="{baseX - 2.5 * ctrl.noteSize}" y="{ctrl.getNoteY(6)}">{rests[item.duration]}</text>
+{else if item.type == "bar"}
+<line x1="{baseX}" x2="{baseX}" y1="{ctrl.getNoteY(2)}" y2="{ctrl.getNoteY(10)}" stroke="black" stroke-width="1"/>
+{else if item.type == "note"}
+{let noteInfo = ctrl.getNoteInfo(item)}
+
+{foreach extraLine in noteInfo.extraLines}
+<line x1="{baseX - 2.5 * ctrl.noteSize}" x2="{baseX + 2.5 * ctrl.noteSize}" y1="{extraLine}" y2="{extraLine}" stroke="black" stroke-width="1"/>
+{/foreach}
+
+{if noteInfo.barDirection}
+{let barX = baseX + noteInfo.barDirection * 1.2 * ctrl.noteSize, noteYEnd = noteInfo.baseY - noteInfo.barDirection * (ctrl.noteSize * 6 + item.duration * ctrl.noteSize + 3)}
+<line x1="{barX}" y1="{noteYEnd}" x2="{barX}" y2="{noteInfo.baseY - ctrl.noteSize*noteInfo.barDirection}" stroke="black" stroke-width="1"/>
+{if noteInfo.flagText}
+<text x="{barX}" y="{noteYEnd}" fill="black">{noteInfo.flagText}</text>
+{/if}
+{/if}
+
+{if noteInfo.alteration}
+<text x="{baseX - 4 * ctrl.noteSize}" y="{noteInfo.baseY}">{noteInfo.alteration}</text>
+{/if}
+
+<text x="{baseX - 1.5 * ctrl.noteSize}" y="{noteInfo.baseY}">{noteInfo.text}</text>
+
+{/if}
+{/foreach}
+</svg>
+
+</template>
+<script>
+    module.exports = musicSheet;
+</script>

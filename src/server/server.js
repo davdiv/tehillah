@@ -50,7 +50,7 @@ var Server = function (httpServer, database) {
     });
 
     app.use(express.static(path.join(__dirname, "../../build/public")));
-    app.use("/lib/bootstrap", express.static(path.join(__dirname, "../../lib/bootstrap")));
+    app.use("/lib", express.static(path.join(__dirname, "../../lib")));
     app.use("/lib/noder-js", express.static(path.dirname(require.resolve("noder-js/dist/browser/noder.js"))));
     app.use("/lib/hashspace", express.static(path.dirname(require.resolve("hashspace/dist/hashspace-noder.js"))));
 

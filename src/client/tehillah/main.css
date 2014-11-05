@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+@font-face {
+	font-family: "beethoven";
+	src: url(/lib/beethoven/svg/beethoven-26.woff) ;
+}
+
 .monospace {
 	font-family: monospace;
 }

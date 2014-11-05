@@ -25,6 +25,8 @@ var readFileAsText = require("../../generic/functions/read-file-as-text");
 var copy = require("../../generic/functions/copy");
 var songImport = require("../song/formats/import");
 
+var notesSample = require("../music-sheet/notes-sample.hsp.html");
+
 var data = {
 	connected: false,
 	admin: location.search.indexOf("admin=true") > -1,
@@ -99,6 +101,7 @@ var drop = function(event) {
 	{if ! data.connected}
 		<div class="alert alert-danger">Not connected !</div>
 	{/if}
+	<h2>Song</h2>
 	<#chordsOptions options="{data.displayChords}"/>
     {if data.admin}
 		<#dropZone onDrop="{drop($event)}">
@@ -138,6 +141,10 @@ var drop = function(event) {
     {else}
 		<#displaySong song="{data.song}" showSelectedVerseOnly="true" selectedVerse="{data.selectedVerse}" displayChords="{data.displayChords}"/>
     {/if}
+
+    <hr>
+    <h2>Music sheets are coming soon:</h2>
+    <#notesSample />
   </div>
 </template>
 
