@@ -1,0 +1,27 @@
+{
+    "song" : {
+        "titles" : [ {
+            "title" : "Title"
+        } ],
+        "channels" : [ {
+            "type" : "lyrics",
+            "id" : "words"
+        } ],
+        "content" : [ {
+            "id" : "chorus",
+            "lines" : [ [ {
+                "words" : "My text"
+            } ] ]
+        }, {
+            "id" : "chorus",
+            "lines" : [ [ {
+                "words" : "My text"
+            } ] ]
+        } ]
+    },
+    "errors" : [ {
+        "id" : "duplicateId",
+        "args" : null,
+        "path" : [ "content", 1, "id" ]
+    } ]
+}

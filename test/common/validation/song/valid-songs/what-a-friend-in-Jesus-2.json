@@ -1,0 +1,114 @@
+{
+    "titles" : [ {
+        "title" : "What A Friend We Have In Jesus",
+        "language" : "eng"
+    } ],
+    "authors" : [ {
+        "name" : "Joseph Medlicott Scriven",
+        "roles" : [ "author" ],
+        "languages" : [ "eng" ]
+    }, {
+        "name" : "Charles Crozat Converse",
+        "roles" : [ "composer" ]
+    } ],
+    "copyright" : "Public Domain",
+    "keys" : [ "D" ],
+    "channels" : [ {
+        "id" : "chord",
+        "type" : "chords"
+    }, {
+        "id" : "lyrics",
+        "type" : "lyrics",
+        "language" : "eng",
+        "verses" : 3
+    } ],
+    "content" : [ {
+        "id" : "verse",
+        "lines" : [ [ {
+            "chord" : "D",
+            "lyrics-1" : "What a friend we have in ",
+            "lyrics-2" : "Have we trials and temp",
+            "lyrics-3" : "Are we weak and heavy "
+        }, {
+            "chord" : "G",
+            "lyrics-1" : "Jesus, ",
+            "lyrics-2" : "tations? ",
+            "lyrics-3" : "laden, "
+        }, {
+            "chord" : "D",
+            "lyrics-1" : "All ours sins and griefs to ",
+            "lyrics-2" : "Is there trouble any",
+            "lyrics-3" : "Cumbered with a load of "
+        }, {
+            "chord" : "A",
+            "lyrics-1" : "bear;",
+            "lyrics-2" : "where?",
+            "lyrics-3" : "care?"
+        } ], [ {
+            "chord" : "D",
+            "lyrics-1" : "What a privilege to ",
+            "lyrics-2" : "We should never be dis",
+            "lyrics-3" : "Precious Saviour still our "
+        }, {
+            "chord" : "G",
+            "lyrics-1" : "carry, ",
+            "lyrics-2" : "couraged, ",
+            "lyrics-3" : "refuge; "
+        }, {
+            "chord" : "A",
+            "lyrics-1" : "Everything to God in ",
+            "lyrics-2" : "Take it to the Lord in ",
+            "lyrics-3" : "Take it to the Lord in "
+        }, {
+            "chord" : "D",
+            "lyrics-1" : "prayer!",
+            "lyrics-2" : "prayer.",
+            "lyrics-3" : "prayer."
+        } ], [ {
+            "chord" : "A",
+            "lyrics-1" : "O what peace we often ",
+            "lyrics-2" : "Can we find a friend so ",
+            "lyrics-3" : "Do thy friends despise for"
+        }, {
+            "chord" : "D",
+            "lyrics-1" : "forfeit, ",
+            "lyrics-2" : "faithful? ",
+            "lyrics-3" : "sake thee? "
+        }, {
+            "chord" : "G",
+            "lyrics-1" : "O what ",
+            "lyrics-2" : "Who will ",
+            "lyrics-3" : "Take it "
+        }, {
+            "chord" : "D",
+            "lyrics-1" : "needless pain we ",
+            "lyrics-2" : "all our sorrows ",
+            "lyrics-3" : "to the Lord in "
+        }, {
+            "chord" : "A",
+            "lyrics-1" : "bear;",
+            "lyrics-2" : "share?",
+            "lyrics-3" : "prayer!"
+        } ], [ {
+            "chord" : "D",
+            "lyrics-1" : "All because we do not ",
+            "lyrics-2" : "Jesus knows our every ",
+            "lyrics-3" : "In His arms He'll take and "
+        }, {
+            "chord" : "G",
+            "lyrics-1" : "carry, ",
+            "lyrics-2" : "weakness; ",
+            "lyrics-3" : "shield thee; "
+        }, {
+            "chord" : "A",
+            "lyrics-1" : "Everything to God in ",
+            "lyrics-2" : "Take it to the Lord in ",
+            "lyrics-3" : "Thou wilt find a solace "
+        }, {
+            "chord" : "D",
+            "lyrics-1" : "prayer!",
+            "lyrics-2" : "prayer.",
+            "lyrics-3" : "there."
+        } ] ]
+    } ]
+}

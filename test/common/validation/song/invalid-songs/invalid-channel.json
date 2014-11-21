@@ -1,0 +1,24 @@
+{
+    "song" : {
+        "titles" : [ {
+            "title" : "Title"
+        } ],
+        "channels" : [ {
+            "type" : "lyrics",
+            "id" : "words"
+        } ],
+        "content" : [ {
+            "id" : "chorus",
+            "lines" : [ [ {
+                "words" : "My text "
+            }, {
+                "wwords" : "is invalid"
+            } ] ]
+        } ]
+    },
+    "errors" : [ {
+        "id" : "object.extra-properties",
+        "args" : [ [ "wwords" ] ],
+        "path" : [ "content", 0, "lines", 0, 1 ]
+    } ]
+}

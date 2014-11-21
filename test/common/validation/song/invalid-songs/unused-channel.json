@@ -1,0 +1,25 @@
+{
+    "song" : {
+        "titles" : [ {
+            "title" : "Title"
+        } ],
+        "channels" : [ {
+            "type" : "lyrics",
+            "id" : "words"
+        }, {
+            "type" : "lyrics",
+            "id" : "unused"
+        } ],
+        "content" : [ {
+            "id" : "chorus",
+            "lines" : [ [ {
+                "words" : "My text"
+            } ] ]
+        } ]
+    },
+    "errors" : [ {
+        "id" : "unusedChannel",
+        "args" : null,
+        "path" : [ "channels", "1" ]
+    } ]
+}
