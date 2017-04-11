@@ -27,7 +27,6 @@
     "gulp-util": "~3.0.1",
     "hashspace": "",
     "minimist": "~1.1.0",
-    "mongodb": "~2.0.4",
     "noder-js": "~1.6.0",
     "page": "~1.3.7",
     "q": "~1.0.1",

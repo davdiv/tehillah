@@ -38,10 +38,9 @@ var serveIndex = function (req, res) {
     }));
 };
 
-var Server = function (httpServer, database) {
+var Server = function (httpServer) {
     var self = this;
     this.httpServer = httpServer;
-    this.database = database;
     var app = this.app = express();
     var ioServer = this.ioServer = new SocketIO();
 

@@ -28,33 +28,22 @@ module.exports = function (argv) {
     argv = minimist(argv, {
         "default" : {
             pfx : "",
-            port : process.env.PORT || "8080",
-            database : process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb://localhost/default"
+            port : process.env.PORT || "8080"
         }
     });
     var pfx = argv.pfx ? fs.readFileSync(argv.pfx) : null;
     var port = parseInt(argv.port, 10);
-    var databaseURI = argv.database;
 
-    console.log("Connecting to the database at %s ...", databaseURI);
-    mongodb.MongoClient.connect(argv.database, function (err, database) {
-        if (err) {
-            console.error("Could not connect to the database at %s !", databaseURI);
-            return;
-        }
-        console.log("Successfully connected to %s.", databaseURI);
+    var httpServer = pfx ? https.createServer({
+        pfx : pfx
+    }) : http.createServer();
 
-        var httpServer = pfx ? https.createServer({
-            pfx : pfx
-        }) : http.createServer();
+    var server = new Server(httpServer);
 
-        var server = new Server(httpServer, database);
-
-        httpServer.listen(port);
-        httpServer.on("listening", function () {
-            var address = httpServer.address();
-            console.log("Listening on %s:%d", address.address, address.port);
-        });
-
+    httpServer.listen(port);
+    httpServer.on("listening", function () {
+        var address = httpServer.address();
+        console.log("Listening on %s:%d", address.address, address.port);
     });
+
 };
